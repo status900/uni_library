@@ -81,8 +81,21 @@
 
     <main class="max-w-4xl mx-auto py-4 px-6">
         
+        <!-- Timeline Section (Dynamically Loaded) -->
+        <div class="mb-14">
+            <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
+                <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Upcoming Assessments</h2>
+                <span class="bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider animate-pulse">Timeline</span>
+            </div>
+            
+            <div id="timeline-list" class="relative border-l-2 border-slate-200 dark:border-slate-800 ml-3 md:ml-4 space-y-6">
+                <div class="pl-6 text-sm text-slate-500 dark:text-slate-400 animate-pulse">Fetching exam schedule...</div>
+            </div>
+        </div>
+
+        <!-- Materials Section -->
         <div class="flex flex-col sm:flex-row justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4 mb-8">
-            <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 sm:mb-0">Select a Course</h2>
+            <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-2 sm:mb-0">Course Materials</h2>
             
             <div id="loading-container" class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800/80">
                 <span id="db-indicator" class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
@@ -91,7 +104,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="course-list">
-            
+            <!-- Computer Algorithms -->
             <div onclick="toggleMaterials('computeralgorithmsandcomplexity')" class="course-card group bg-white dark:bg-[#0f1626] p-6 rounded-2xl border border-slate-200/80 dark:border-slate-900/80 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors duration-200">Computer Algorithms and Complexity</h3>
@@ -105,6 +118,7 @@
                 </div>
             </div>
 
+            <!-- Electrical Circuits -->
             <div onclick="toggleMaterials('electricalcircuits')" class="course-card group bg-white dark:bg-[#0f1626] p-6 rounded-2xl border border-slate-200/80 dark:border-slate-900/80 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors duration-200">Electrical Circuits</h3>
@@ -118,6 +132,7 @@
                 </div>
             </div>
 
+            <!-- Coordinate Geometry & Vector Analysis -->
             <div onclick="toggleMaterials('coordinategeometryvectoranalysis')" class="course-card group bg-white dark:bg-[#0f1626] p-6 rounded-2xl border border-slate-200/80 dark:border-slate-900/80 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-200">Coordinate Geometry & Vector Analysis</h3>
@@ -131,6 +146,7 @@
                 </div>
             </div>
 
+            <!-- Introduction to Sociology -->
             <div onclick="toggleMaterials('introductiontosociology')" class="course-card group bg-white dark:bg-[#0f1626] p-6 rounded-2xl border border-slate-200/80 dark:border-slate-900/80 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200">Introduction to Sociology</h3>
@@ -144,6 +160,7 @@
                 </div>
             </div>
 
+            <!-- Theory of Computation -->
             <div onclick="toggleMaterials('theoryofcomputation')" class="course-card group bg-white dark:bg-[#0f1626] p-6 rounded-2xl border border-slate-200/80 dark:border-slate-900/80 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300">
                 <div class="flex items-start justify-between">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors duration-200">Theory of Computation</h3>
@@ -156,7 +173,6 @@
                     <ul class="space-y-3" id="list-theoryofcomputation"></ul>
                 </div>
             </div>
-
         </div>
     </main>
 
@@ -180,10 +196,18 @@
     </div>
 
     <script>
-        // Google Sheet Connection Configuration
-        const SPREADSHEET_ID = '1jOI-Snh8tf3MLk2WCUD0ujBj3tNxBbLwZw6KFwlAKRg'; 
-        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+        // ==========================================
+        // 1. Google Sheets Configuration
+        // ==========================================
         
+        // Materials Database
+        const MATERIALS_SPREADSHEET_ID = '1jOI-Snh8tf3MLk2WCUD0ujBj3tNxBbLwZw6KFwlAKRg'; 
+        const materialsUrl = `https://docs.google.com/spreadsheets/d/${MATERIALS_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+        
+        // Exam Timeline Database
+        const EXAM_SPREADSHEET_ID = '1b3xGgPBPKd841V4bsSlcDsplBtn1V1c8birCLGijCjM'; 
+        const examUrl = `https://docs.google.com/spreadsheets/d/${EXAM_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+
         let globalCourseData = {
             'computeralgorithmsandcomplexity': { name: 'Computer Algorithms and Complexity', files: [] },
             'electricalcircuits': { name: 'Electrical Circuits', files: [] },
@@ -192,7 +216,9 @@
             'theoryofcomputation': { name: 'Theory of Computation', files: [] }
         };
 
-        // Theme Toggle Functionality
+        // ==========================================
+        // 2. Theme Toggle Functionality
+        // ==========================================
         function toggleTheme() {
             const html = document.documentElement;
             const themeIcon = document.getElementById('theme-icon');
@@ -211,49 +237,138 @@
             }
         }
 
-        // Apply Saved Theme Instantly on Load
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.documentElement.classList.remove('dark');
-            document.getElementById('theme-icon').innerText = '🌙';
-            document.getElementById('theme-text').innerText = 'DARK MODE';
-        } else {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-icon').innerText = '☀️';
-            document.getElementById('theme-text').innerText = 'LIGHT MODE';
+        // Force Dark Mode on Every Page Load
+        function initializeTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+
+            html.classList.add('dark');
+            localStorage.setItem('theme', 'dark'); 
+
+            if(themeIcon && themeText) {
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Light Mode';
+            }
         }
 
-        // Secure Data Fetcher
+        initializeTheme();
+        // ==========================================
+        // 3. Timeline / Exam Database Fetcher
+        // ==========================================
+        async function fetchTimelineData() {
+            const timelineList = document.getElementById('timeline-list');
+            try {
+                const response = await fetch(examUrl);
+                const text = await response.text();
+                const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+                const rows = json.table.rows;
+
+                timelineList.innerHTML = ''; // Clear loading text
+                const now = new Date();
+                let hasExams = false;
+
+                rows.forEach((row, index) => {
+                    // Skip header row or empty rows
+                    if (index === 0 || !row.c || !row.c[0]) return;
+
+                    const courseName = row.c[0] ? row.c[0].v : 'Unknown Course';
+                    const examType = row.c[1] ? row.c[1].v : 'Exam';
+                    const topic = row.c[2] ? row.c[2].v : '';
+                    const dateStr = row.c[3] ? row.c[3].v : ''; // Date format MUST be YYYY/MM/DD HH:MM
+
+                    if (!dateStr) return;
+
+                    const examDate = new Date(dateStr);
+                    const diffMs = now - examDate;
+                    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+                    // যদি পরীক্ষা পার হয়ে ৭ দিন পার হয়ে যায়, তবে স্কিপ করুন (দেখাবেন না)
+                    if (diffDays > 7) return;
+
+                    hasExams = true;
+                    const isCompleted = diffMs > 0; // যদি বর্তমান সময় পরীক্ষার সময় থেকে বেশি হয়
+
+                    // Date Formatting for Display
+                    const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+                    const formattedDate = examDate.toLocaleDateString('en-US', options);
+
+                    // Dynamic Styling based on Status
+                    const cardStyle = isCompleted 
+                        ? 'opacity-70 grayscale-[30%] border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#0b101d]' 
+                        : 'border-slate-200/80 dark:border-slate-900/80 bg-white dark:bg-[#0f1626] shadow-sm hover:shadow-md hover:border-sky-200 dark:hover:border-sky-900/50';
+                    
+                    const dotStyle = isCompleted
+                        ? 'border-slate-400 bg-slate-200 dark:bg-slate-700'
+                        : 'border-sky-500 bg-white dark:bg-[#080c14] group-hover:scale-125';
+                    
+                    const dateStyle = isCompleted
+                        ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30'
+                        : 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30';
+
+                    const dateIcon = isCompleted ? '✅' : '🗓️';
+                    const dateText = isCompleted ? 'Completed' : formattedDate;
+
+                    const html = `
+                        <div class="relative pl-6 md:pl-8 group">
+                            <!-- Timeline Dot -->
+                            <div class="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full border-4 transition-transform duration-300 ${dotStyle}"></div>
+                            
+                            <div class="p-5 rounded-2xl border transition-all duration-300 ${cardStyle}">
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-2">
+                                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">${courseName}</h3>
+                                    <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 uppercase tracking-wide">
+                                        ${examType}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+                                    <span class="font-semibold text-slate-700 dark:text-slate-300">Topic:</span> ${topic}
+                                </div>
+                                <div class="flex items-center text-xs font-semibold w-fit px-3 py-1.5 rounded-lg border ${dateStyle}">
+                                    ${dateIcon} ${dateText}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    timelineList.insertAdjacentHTML('beforeend', html);
+                });
+
+                if (!hasExams) {
+                    timelineList.innerHTML = `<div class="pl-6 text-sm font-medium text-slate-500 dark:text-slate-400">No upcoming assessments. Enjoy your time! 🎉</div>`;
+                }
+
+            } catch (error) {
+                timelineList.innerHTML = `<div class="pl-6 text-sm font-medium text-rose-500">Failed to load exam schedule.</div>`;
+                console.error("Timeline Error:", error);
+            }
+        }
+
+        // ==========================================
+        // 4. Materials Database Fetcher (Old Code)
+        // ==========================================
         async function fetchSheetData() {
             try {
-                const response = await fetch(url);
+                const response = await fetch(materialsUrl);
                 const text = await response.text();
                 const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
                 const rows = json.table.rows;
 
                 rows.forEach((row, index) => {
                     if (index === 0 || !row.c || !row.c[0]) return;
-
                     const courseName = row.c[0] ? row.c[0].v : '';
                     const fileTitle = row.c[1] ? row.c[1].v : 'Untitled File';
                     const fileType = row.c[2] ? row.c[2].v : 'Link';
                     const fileLink = row.c[3] ? row.c[3].v : '#';
 
                     const courseId = courseName.toLowerCase().replace(/[^a-z0-9]/g, '');
-
                     if (globalCourseData[courseId]) {
-                        globalCourseData[courseId].files.push({
-                            title: fileTitle,
-                            type: fileType,
-                            link: fileLink
-                        });
+                        globalCourseData[courseId].files.push({ title: fileTitle, type: fileType, link: fileLink });
                     }
                 });
 
-                // Success State Update on Status Indicator
                 const indicator = document.getElementById('db-indicator');
                 const loadingText = document.getElementById('loading-text');
-                
                 indicator.className = "w-2 h-2 bg-emerald-500 rounded-full"; 
                 loadingText.innerText = "Live Database Connected";
                 loadingText.className = "text-xs font-semibold text-emerald-600 dark:text-emerald-400";
@@ -263,7 +378,6 @@
             } catch (error) {
                 const indicator = document.getElementById('db-indicator');
                 const loadingText = document.getElementById('loading-text');
-                
                 indicator.className = "w-2 h-2 bg-rose-500 rounded-full"; 
                 loadingText.innerText = "Database Offline / Blocked";
                 loadingText.className = "text-xs font-semibold text-rose-500";
@@ -271,7 +385,6 @@
             }
         }
 
-        // Beautiful Item Count Updates
         function updateItemCounts() {
             for (const id in globalCourseData) {
                 const countElement = document.getElementById(`count-${id}`);
@@ -282,31 +395,22 @@
             }
         }
 
-        // Toggle Materials Inline (Accordion)
         function toggleMaterials(courseId) {
             const container = document.getElementById(`materials-${courseId}`);
             const fileList = document.getElementById(`list-${courseId}`);
             const data = globalCourseData[courseId];
 
-            // If it's already open, close it
             if (!container.classList.contains('hidden')) {
                 container.classList.add('hidden');
                 return;
             }
 
-            // Otherwise, close all others first (optional, but keeps UI clean)
-            document.querySelectorAll('.materials-container').forEach(el => {
-                el.classList.add('hidden');
-            });
+            document.querySelectorAll('.materials-container').forEach(el => el.classList.add('hidden'));
 
-            // Build List if empty
             if (fileList.innerHTML === '') {
                 if (data.files.length === 0) {
                     fileList.innerHTML = `
                         <div class="text-center py-6 text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-[#0b0f19]/60 rounded-xl">
-                            <svg class="mx-auto h-10 w-10 text-slate-300 dark:text-slate-700 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
                             <p class="font-semibold text-sm">No files uploaded yet.</p>
                         </div>`;
                 } else {
@@ -314,18 +418,12 @@
                         let badgeStyles = "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300";
                         const fType = file.type.toUpperCase();
                         
-                        if (fType === 'PDF') {
-                            badgeStyles = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30";
-                        } else if (fType === 'VIDEO' || fType === 'CLASS') {
-                            badgeStyles = "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30";
-                        } else if (fType === 'LINK' || fType === 'DRIVE') {
-                            badgeStyles = "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30";
-                        }
+                        if (fType === 'PDF') badgeStyles = "bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30";
+                        else if (fType === 'VIDEO' || fType === 'CLASS') badgeStyles = "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30";
+                        else if (fType === 'LINK' || fType === 'DRIVE') badgeStyles = "bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30";
 
                         const li = document.createElement('li');
                         li.className = "flex flex-col sm:flex-row justify-between p-3 bg-slate-50/80 dark:bg-[#0b0f19]/80 hover:bg-slate-100 dark:hover:bg-[#080c14] border border-slate-200/60 dark:border-slate-800/80 rounded-xl transition-all";
-                        
-                        // Prevents card click trigger when clicking inside the list
                         li.onclick = (e) => e.stopPropagation();
 
                         li.innerHTML = `
@@ -334,57 +432,46 @@
                                 <span class="font-bold text-slate-700 dark:text-slate-200 break-all text-sm">${file.title}</span>
                             </div>
                             <div class="flex space-x-2">
-                                <button onclick="openPreview(event, '${file.title}', '${file.link}')" class="flex-1 sm:flex-none text-center text-xs bg-sky-500 text-white dark:bg-sky-500 dark:text-[#080c14] font-bold px-3 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all">
-                                    Preview
-                                </button>
-                                <a href="${file.link}" target="_blank" onclick="event.stopPropagation()" class="flex-1 sm:flex-none text-center text-xs bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold px-3 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 active:scale-95 transition-all">
-                                    Download
-                                </a>
+                                <button onclick="openPreview(event, '${file.title}', '${file.link}')" class="flex-1 sm:flex-none text-center text-xs bg-sky-500 text-white dark:bg-sky-500 dark:text-[#080c14] font-bold px-3 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all">Preview</button>
+                                <a href="${file.link}" target="_blank" onclick="event.stopPropagation()" class="flex-1 sm:flex-none text-center text-xs bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold px-3 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 active:scale-95 transition-all">Download</a>
                             </div>
                         `;
                         fileList.appendChild(li);
                     });
                 }
             }
-
-            // Open this container
             container.classList.remove('hidden');
         }
 
-        // Feature 2: Embed Google Drive Link in Modal
         function openPreview(event, title, link) {
-            event.stopPropagation(); // Prevent the accordion from closing
+            event.stopPropagation();
             let previewLink = link;
-            
-            // Auto convert Google drive "view" link to "preview" link for iframe embed
             if (link.includes('drive.google.com/file/d/')) {
                 const match = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) {
-                    previewLink = `https://drive.google.com/file/d/${match[1]}/preview`;
-                }
+                if (match && match[1]) previewLink = `https://drive.google.com/file/d/${match[1]}/preview`;
             } else if (link.includes('drive.google.com/open?id=')) {
                 const urlParams = new URLSearchParams(link.split('?')[1]);
                 const id = urlParams.get('id');
-                if (id) {
-                    previewLink = `https://drive.google.com/file/d/${id}/preview`;
-                }
+                if (id) previewLink = `https://drive.google.com/file/d/${id}/preview`;
             }
-
             document.getElementById('modal-title').innerText = title;
             document.getElementById('preview-frame').src = previewLink;
             document.getElementById('preview-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Stop background scrolling
+            document.body.style.overflow = 'hidden';
         }
 
-        // Close the Preview Modal
         function closeModal() {
             document.getElementById('preview-modal').classList.add('hidden');
-            document.getElementById('preview-frame').src = ''; // Clear iframe to stop video/audio playing in background
-            document.body.style.overflow = 'auto'; // Restore background scrolling
+            document.getElementById('preview-frame').src = '';
+            document.body.style.overflow = 'auto';
         }
 
-        // Fetch data on initial load
-        fetchSheetData();
+        // ==========================================
+        // 5. Initialize Calls on Load
+        // ==========================================
+        fetchSheetData(); // Load Materials
+        fetchTimelineData(); // Load Timeline
+        
     </script>
 </body>
 </html>
