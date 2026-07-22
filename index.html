@@ -254,7 +254,7 @@
         }
 
         initializeTheme();
-        // ==========================================
+       // ==========================================
         // 3. Timeline / Exam Database Fetcher
         // ==========================================
         async function fetchTimelineData() {
@@ -267,16 +267,16 @@
 
                 timelineList.innerHTML = ''; // Clear loading text
                 const now = new Date();
-                let hasExams = false;
+                let exams = []; // ডেটা জমা করার জন্য খালি অ্যারে
 
+                // ১. শিট থেকে ডেটা পড়ে অ্যারেতে জমা করা
                 rows.forEach((row, index) => {
-                    // Skip header row or empty rows
                     if (index === 0 || !row.c || !row.c[0]) return;
 
                     const courseName = row.c[0] ? row.c[0].v : 'Unknown Course';
                     const examType = row.c[1] ? row.c[1].v : 'Exam';
                     const topic = row.c[2] ? row.c[2].v : '';
-                    const dateStr = row.c[3] ? row.c[3].v : ''; // Date format MUST be YYYY/MM/DD HH:MM
+                    const dateStr = row.c[3] ? row.c[3].v : ''; 
 
                     if (!dateStr) return;
 
@@ -284,31 +284,46 @@
                     const diffMs = now - examDate;
                     const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-                    // যদি পরীক্ষা পার হয়ে ৭ দিন পার হয়ে যায়, তবে স্কিপ করুন (দেখাবেন না)
+                    // পরীক্ষা পার হয়ে ৭ দিন পার হয়ে গেলে বাদ দেওয়া হবে
                     if (diffDays > 7) return;
 
-                    hasExams = true;
-                    const isCompleted = diffMs > 0; // যদি বর্তমান সময় পরীক্ষার সময় থেকে বেশি হয়
+                    exams.push({
+                        courseName,
+                        examType,
+                        topic,
+                        examDate,
+                        isCompleted: diffMs > 0
+                    });
+                });
 
-                    // Date Formatting for Display
+                // ২. তারিখ অনুযায়ী ক্রমানুসারে সাজানো (Sort)
+                exams.sort((a, b) => a.examDate - b.examDate);
+
+                // ৩. যদি কোনো পরীক্ষা না থাকে
+                if (exams.length === 0) {
+                    timelineList.innerHTML = `<div class="pl-6 text-sm font-medium text-slate-500 dark:text-slate-400">No upcoming assessments. Enjoy your time! 🎉</div>`;
+                    return;
+                }
+
+                // ৪. সাজানো ডেটাগুলো ওয়েবসাইটে শো করা
+                exams.forEach(exam => {
                     const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-                    const formattedDate = examDate.toLocaleDateString('en-US', options);
+                    const formattedDate = exam.examDate.toLocaleDateString('en-US', options);
 
-                    // Dynamic Styling based on Status
-                    const cardStyle = isCompleted 
+                    const cardStyle = exam.isCompleted 
                         ? 'opacity-70 grayscale-[30%] border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#0b101d]' 
                         : 'border-slate-200/80 dark:border-slate-900/80 bg-white dark:bg-[#0f1626] shadow-sm hover:shadow-md hover:border-sky-200 dark:hover:border-sky-900/50';
                     
-                    const dotStyle = isCompleted
+                    const dotStyle = exam.isCompleted
                         ? 'border-slate-400 bg-slate-200 dark:bg-slate-700'
                         : 'border-sky-500 bg-white dark:bg-[#080c14] group-hover:scale-125';
                     
-                    const dateStyle = isCompleted
+                    const dateStyle = exam.isCompleted
                         ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30'
                         : 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 border-rose-100 dark:border-rose-900/30';
 
-                    const dateIcon = isCompleted ? '✅' : '🗓️';
-                    const dateText = isCompleted ? 'Completed' : formattedDate;
+                    const dateIcon = exam.isCompleted ? '✅' : '🗓️';
+                    const dateText = exam.isCompleted ? 'Completed' : formattedDate;
 
                     const html = `
                         <div class="relative pl-6 md:pl-8 group">
@@ -317,13 +332,13 @@
                             
                             <div class="p-5 rounded-2xl border transition-all duration-300 ${cardStyle}">
                                 <div class="flex flex-wrap justify-between items-start gap-2 mb-2">
-                                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">${courseName}</h3>
+                                    <h3 class="text-base font-bold text-slate-800 dark:text-slate-100">${exam.courseName}</h3>
                                     <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 uppercase tracking-wide">
-                                        ${examType}
+                                        ${exam.examType}
                                     </span>
                                 </div>
                                 <div class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
-                                    <span class="font-semibold text-slate-700 dark:text-slate-300">Topic:</span> ${topic}
+                                    <span class="font-semibold text-slate-700 dark:text-slate-300">Topic:</span> ${exam.topic}
                                 </div>
                                 <div class="flex items-center text-xs font-semibold w-fit px-3 py-1.5 rounded-lg border ${dateStyle}">
                                     ${dateIcon} ${dateText}
@@ -333,10 +348,6 @@
                     `;
                     timelineList.insertAdjacentHTML('beforeend', html);
                 });
-
-                if (!hasExams) {
-                    timelineList.innerHTML = `<div class="pl-6 text-sm font-medium text-slate-500 dark:text-slate-400">No upcoming assessments. Enjoy your time! 🎉</div>`;
-                }
 
             } catch (error) {
                 timelineList.innerHTML = `<div class="pl-6 text-sm font-medium text-rose-500">Failed to load exam schedule.</div>`;
