@@ -81,7 +81,7 @@
 
     <main class="max-w-4xl mx-auto py-4 px-6">
         
-        <!-- Timeline Section (Dynamically Loaded) -->
+        <!-- Timeline Section -->
         <div class="mb-14">
             <div class="flex items-center space-x-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-6">
                 <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Upcoming Assessments</h2>
@@ -199,12 +199,9 @@
         // ==========================================
         // 1. Google Sheets Configuration
         // ==========================================
-        
-        // Materials Database
         const MATERIALS_SPREADSHEET_ID = '1jOI-Snh8tf3MLk2WCUD0ujBj3tNxBbLwZw6KFwlAKRg'; 
         const materialsUrl = `https://docs.google.com/spreadsheets/d/${MATERIALS_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
         
-        // Exam Timeline Database
         const EXAM_SPREADSHEET_ID = '1b3xGgPBPKd841V4bsSlcDsplBtn1V1c8birCLGijCjM'; 
         const examUrl = `https://docs.google.com/spreadsheets/d/${EXAM_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
@@ -237,12 +234,10 @@
             }
         }
 
-        // Force Dark Mode on Every Page Load
         function initializeTheme() {
             const html = document.documentElement;
             const themeIcon = document.getElementById('theme-icon');
             const themeText = document.getElementById('theme-text');
-
 
             html.classList.add('dark');
             localStorage.setItem('theme', 'dark'); 
@@ -254,8 +249,9 @@
         }
 
         initializeTheme();
-       // ==========================================
-        // 3. Timeline / Exam Database Fetcher
+
+        // ==========================================
+        // 3. Timeline / Exam Database Fetcher with Sorting
         // ==========================================
         async function fetchTimelineData() {
             const timelineList = document.getElementById('timeline-list');
@@ -265,11 +261,10 @@
                 const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
                 const rows = json.table.rows;
 
-                timelineList.innerHTML = ''; // Clear loading text
+                timelineList.innerHTML = ''; 
                 const now = new Date();
-                let exams = []; // ডেটা জমা করার জন্য খালি অ্যারে
+                let exams = []; 
 
-                // ১. শিট থেকে ডেটা পড়ে অ্যারেতে জমা করা
                 rows.forEach((row, index) => {
                     if (index === 0 || !row.c || !row.c[0]) return;
 
@@ -284,7 +279,6 @@
                     const diffMs = now - examDate;
                     const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
-                    // পরীক্ষা পার হয়ে ৭ দিন পার হয়ে গেলে বাদ দেওয়া হবে
                     if (diffDays > 7) return;
 
                     exams.push({
@@ -296,16 +290,14 @@
                     });
                 });
 
-                // ২. তারিখ অনুযায়ী ক্রমানুসারে সাজানো (Sort)
+                // Sort exams chronologically by date
                 exams.sort((a, b) => a.examDate - b.examDate);
 
-                // ৩. যদি কোনো পরীক্ষা না থাকে
                 if (exams.length === 0) {
                     timelineList.innerHTML = `<div class="pl-6 text-sm font-medium text-slate-500 dark:text-slate-400">No upcoming assessments. Enjoy your time! 🎉</div>`;
                     return;
                 }
 
-                // ৪. সাজানো ডেটাগুলো ওয়েবসাইটে শো করা
                 exams.forEach(exam => {
                     const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
                     const formattedDate = exam.examDate.toLocaleDateString('en-US', options);
@@ -327,7 +319,6 @@
 
                     const html = `
                         <div class="relative pl-6 md:pl-8 group">
-                            <!-- Timeline Dot -->
                             <div class="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full border-4 transition-transform duration-300 ${dotStyle}"></div>
                             
                             <div class="p-5 rounded-2xl border transition-all duration-300 ${cardStyle}">
@@ -356,7 +347,7 @@
         }
 
         // ==========================================
-        // 4. Materials Database Fetcher (Old Code)
+        // 4. Materials Database Fetcher
         // ==========================================
         async function fetchSheetData() {
             try {
@@ -480,8 +471,8 @@
         // ==========================================
         // 5. Initialize Calls on Load
         // ==========================================
-        fetchSheetData(); // Load Materials
-        fetchTimelineData(); // Load Timeline
+        fetchSheetData(); 
+        fetchTimelineData(); 
         
     </script>
 </body>
