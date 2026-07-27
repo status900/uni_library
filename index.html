@@ -479,12 +479,11 @@
             document.body.style.overflow = 'auto';
         }
 
-        // ==========================================
-        // 5. Visitor Counter Function
+     // ==========================================
+        // 5. Visitor Counter Function (Updated)
         // ==========================================
         function fetchVisitorCount() {
-            // آپনার প্রোজেক্টের নাম দিয়ে 'mahdis-hub-lu66c' চেইঞ্জ করে নিতে পারেন
-            fetch('https://api.countapi.xyz/hit/mahdis-hub-lu66c/visits')
+            fetch('https://abacus.jasoncameron.dev/hit/mahdis-hub-lu66c/visits')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('visitor-count').innerText = data.value;
@@ -494,7 +493,6 @@
                     document.getElementById('visitor-count').innerText = 'N/A';
                 });
         }
-
         // ==========================================
         // 6. Initialize Calls on Load
         // ==========================================
