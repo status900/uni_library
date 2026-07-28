@@ -65,7 +65,7 @@
 
     <header class="relative max-w-4xl mx-auto text-center pt-16 pb-12 px-6">
         <div class="inline-block p-4 bg-white dark:bg-[#0f1626] rounded-3xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl dark:shadow-sky-500/5 mb-6 hover:scale-105 transition-transform duration-300">
-            <img src="https://lus.ac.bd/wp-content/uploads/2026/03/lu-logo-white-2.png" class="h-28 md:h-36 w-auto object-contain">
+            <img src="https://drive.google.com/file/d/1HZiltfsjVoTbdpAkrR04_SmyoyPtD6Qi/view?usp=sharing" class="h-28 md:h-36 w-auto object-contain">
         </div>
         
         <h1 class="text-3xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
@@ -208,12 +208,12 @@
 
     <script>
         // ==========================================
-        // 1. Google Sheets Configuration
+        // 1. Google Sheets Configuration (Updated IDs)
         // ==========================================
-        const MATERIALS_SPREADSHEET_ID = '1jOI-Snh8tf3MLk2WCUD0ujBj3tNxBbLwZw6KFwlAKRg'; 
+        const MATERIALS_SPREADSHEET_ID = '1-bB5YpA5FZCSoJhYDITXOHmfeM9iNU5dDBVdmxczR1M'; 
         const materialsUrl = `https://docs.google.com/spreadsheets/d/${MATERIALS_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
         
-        const EXAM_SPREADSHEET_ID = '1b3xGgPBPKd841V4bsSlcDsplBtn1V1c8birCLGijCjM'; 
+        const EXAM_SPREADSHEET_ID = '1MEGzTng46sUgksDOu0ph24M2CjRIbNdLOXy5efiqHso'; 
         const examUrl = `https://docs.google.com/spreadsheets/d/${EXAM_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
         let globalCourseData = {
@@ -301,7 +301,6 @@
                     });
                 });
 
-                // Sort exams chronologically by date
                 exams.sort((a, b) => a.examDate - b.examDate);
 
                 if (exams.length === 0) {
@@ -479,8 +478,8 @@
             document.body.style.overflow = 'auto';
         }
 
-     // ==========================================
-        // 5. Visitor Counter Function (Updated)
+        // ==========================================
+        // 5. Visitor Counter Function
         // ==========================================
         function fetchVisitorCount() {
             fetch('https://abacus.jasoncameron.dev/hit/mahdis-hub-lu66c/visits')
@@ -493,13 +492,13 @@
                     document.getElementById('visitor-count').innerText = 'N/A';
                 });
         }
+
         // ==========================================
         // 6. Initialize Calls on Load
         // ==========================================
         fetchSheetData(); 
         fetchTimelineData(); 
         fetchVisitorCount();
-        
     </script>
 </body>
 </html>
