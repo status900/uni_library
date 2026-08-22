@@ -222,7 +222,7 @@
 
     <script>
         // ==========================================
-        // 1. Google Sheets Configuration (Updated IDs)
+        // 1. Google Sheets Configuration
         // ==========================================
         const MATERIALS_SPREADSHEET_ID = '1-bB5YpA5FZCSoJhYDITXOHmfeM9iNU5dDBVdmxczR1M'; 
         const materialsUrl = `https://docs.google.com/spreadsheets/d/${MATERIALS_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
@@ -230,7 +230,7 @@
         const EXAM_SPREADSHEET_ID = '1MEGzTng46sUgksDOu0ph24M2CjRIbNdLOXy5efiqHso'; 
         const examUrl = `https://docs.google.com/spreadsheets/d/${EXAM_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
-        // PYQ Google Sheet ID (Your Provided Sheet ID)
+        // PYQ Google Sheet ID
         const PYQ_SPREADSHEET_ID = '1jl5v-RHbymFfbL-74CekvB_IoG1IBWW4EXsN78xlSuQ'; 
         const pyqUrl = `https://docs.google.com/spreadsheets/d/${PYQ_SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
 
@@ -280,7 +280,7 @@
         initializeTheme();
 
         // ==========================================
-        // 3. Timeline / Exam Database Fetcher with Sorting
+        // 3. Timeline / Exam Database Fetcher
         // ==========================================
         async function fetchTimelineData() {
             const timelineList = document.getElementById('timeline-list');
@@ -375,7 +375,7 @@
         }
 
         // ==========================================
-        // 4. Fetch Previous Year Questions (PYQ)
+        // 4. Fetch PYQ (2 Columns: Batch & Link Only)
         // ==========================================
         async function fetchPyqData() {
             const pyqContainer = document.getElementById('pyq-list');
@@ -390,22 +390,21 @@
                 rows.forEach((row, index) => {
                     if (index === 0 || !row.c || !row.c[0]) return;
 
-                    const courseName = row.c[0] ? row.c[0].v : 'Unknown Course';
-                    const batchName = row.c[1] ? row.c[1].v : 'Batch'; 
-                    const driveLink = row.c[2] ? row.c[2].v : '#';
+                    // Col A: Batch/Year, Col B: Drive Link
+                    const batchName = row.c[0] ? row.c[0].v : 'Batch / Year'; 
+                    const driveLink = row.c[1] ? row.c[1].v : '#';
 
                     const li = document.createElement('li');
                     li.className = "flex flex-col sm:flex-row justify-between items-start sm:items-center p-3.5 bg-slate-50/80 dark:bg-[#0b0f19]/80 border border-slate-200/60 dark:border-slate-800/80 rounded-xl transition-all hover:border-indigo-500/30";
 
                     li.innerHTML = `
                         <div class="flex items-center space-x-3 mb-3 sm:mb-0">
-                            <span class="text-[10px] tracking-wider font-extrabold px-2 py-1 rounded-md uppercase bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30">
-                                ${batchName}
+                            <span class="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                📄 ${batchName}
                             </span>
-                            <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">${courseName}</span>
                         </div>
                         <div class="flex space-x-2 w-full sm:w-auto">
-                            <button onclick="openPreview(event, '${courseName} - ${batchName}', '${driveLink}')" class="flex-1 sm:flex-none text-center text-xs bg-sky-500 text-white dark:bg-sky-500 dark:text-[#080c14] font-bold px-3.5 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all">Preview</button>
+                            <button onclick="openPreview(event, '${batchName}', '${driveLink}')" class="flex-1 sm:flex-none text-center text-xs bg-sky-500 text-white dark:bg-sky-500 dark:text-[#080c14] font-bold px-3.5 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all">Preview</button>
                             <a href="${driveLink}" target="_blank" class="flex-1 sm:flex-none text-center text-xs bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold px-3.5 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700 active:scale-95 transition-all">Open Drive</a>
                         </div>
                     `;
